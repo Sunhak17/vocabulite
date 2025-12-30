@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'profile_setup_page.dart';
 
 class SplashPage extends StatelessWidget {
   const SplashPage({super.key});
@@ -72,7 +73,14 @@ class SplashPage extends StatelessWidget {
                   ),
                   elevation: 4,
                 ),
-                onPressed: () => Navigator.pushNamed(context, '/levels'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const ProfileSetupPage(),
+                    ),
+                  );
+                },
                 child: const Text(
                   'Get Started',
                   style: TextStyle(

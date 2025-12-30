@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
 import 'level_articles_page.dart';
 import 'flashcard_list_page.dart';
+import 'home_page.dart';
+import 'quiz_home_page.dart';
+import 'favorites_page.dart';
+import '../data/user_progress_repository.dart';
 
-class LevelPage extends StatelessWidget {
+class LevelPage extends StatefulWidget {
   const LevelPage({super.key});
 
+  @override
+  State<LevelPage> createState() => _LevelPageState();
+}
+
+class _LevelPageState extends State<LevelPage> {
   static final List<Map<String, dynamic>> _levels = [
     {'code': 'A1', 'label': 'Beginner', 'color': Color(0xFF9E9E9E)},
     {'code': 'A2', 'label': 'Elementary', 'color': Color(0xFFFFC107)},
@@ -20,7 +29,6 @@ class LevelPage extends StatelessWidget {
       drawer: Drawer(
         child: Column(
           children: [
-            // Drawer Header
             Container(
               padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
@@ -31,63 +39,90 @@ class LevelPage extends StatelessWidget {
                 ),
               ),
               child: SafeArea(
-                child: Column(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Text('🇬🇧', style: TextStyle(fontSize: 24)),
-                        ),
-                        Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.emoji_events, color: Colors.orange, size: 20),
-                                  const SizedBox(width: 4),
-                                  const Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(Icons.notifications, color: Colors.orange, size: 20),
-                            ),
-                          ],
-                        ),
-                      ],
+                    const Text(
+                      'Menu',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
               ),
             ),
-            // Menu Items
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _buildMenuItem(context, 'Chat', Icons.chat_bubble_outline, false),
-                  _buildMenuItem(context, 'Personas', Icons.person_outline, false),
-                  _buildMenuItem(context, 'Flashcards', Icons.style_outlined, false),
-                  _buildMenuItem(context, 'Challenges', Icons.bolt, true),
-                  const Divider(height: 32),
-                  _buildMenuItem(context, 'Friends', Icons.people_outline, false),
+                  ListTile(
+                    leading: const Icon(Icons.home, color: Color(0xFF1976D2)),
+                    title: const Text('Home'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (_) => const HomePage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.article, color: Color(0xFFD97706)),
+                    title: const Text('Articles'),
+                    selected: true,
+                    onTap: () => Navigator.pop(context),
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.bookmark, color: Color(0xFFE91E63)),
+                    title: const Text('Favorites'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FavoritesPage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.quiz, color: Color(0xFF1976D2)),
+                    title: const Text('Quiz'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const QuizHomePage()),
+                      );
+                    },
+                  ),
+                  ListTile(
+                    leading: const Icon(Icons.style, color: Color(0xFF8B4513)),
+                    title: const Text('Flashcards'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const FlashcardListPage()),
+                      );
+                    },
+                  ),
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.person, color: Colors.grey),
+                    title: const Text('Profile'),
+                    onTap: () {
+                      Navigator.pop(context);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile coming soon!')),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -168,59 +203,100 @@ class LevelPage extends StatelessWidget {
                     separatorBuilder: (context, index) => const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final lvl = _levels[index];
+                      final levelCode = lvl['code'] as String;
+                      final isUnlocked = UserProgressRepository.isLevelUnlocked(levelCode);
+                      final isCompleted = UserProgressRepository.isLevelCompleted(levelCode);
+                      
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => LevelArticlesPage(level: lvl['code'] as String),
-                            ),
-                          );
+                          if (isUnlocked) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => LevelArticlesPage(level: levelCode),
+                              ),
+                            ).then((_) => setState(() {})); // Refresh on return
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Complete previous levels to unlock this level'),
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
                         },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            children: [
-                              // Level code badge
-                              Container(
-                                width: 90,
-                                height: 60,
-                                decoration: BoxDecoration(
-                                  color: (lvl['color'] as Color),
-                                  borderRadius: const BorderRadius.only(
-                                    topLeft: Radius.circular(12),
-                                    bottomLeft: Radius.circular(12),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    lvl['code'],
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 24,
-                                    ),
-                                  ),
-                                ),
+                        child: Opacity(
+                          opacity: isUnlocked ? 1.0 : 0.5,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: isCompleted ? const Color(0xFF43A047) : Colors.transparent,
+                                width: 2,
                               ),
-                              // Level label
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                  child: Text(
-                                    lvl['label'],
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black87,
+                            ),
+                            child: Stack(
+                              children: [
+                                Row(
+                                  children: [
+                                    // Level code badge
+                                    Container(
+                                      width: 90,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                        color: (lvl['color'] as Color),
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          bottomLeft: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          levelCode,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 24,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                    // Level label
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                                        child: Text(
+                                          lvl['label'],
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    // Lock icon or completed icon
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 16.0),
+                                      child: isCompleted
+                                          ? const Icon(
+                                              Icons.check_circle,
+                                              color: Color(0xFF43A047),
+                                              size: 28,
+                                            )
+                                          : !isUnlocked
+                                              ? const Icon(
+                                                  Icons.lock,
+                                                  color: Colors.grey,
+                                                  size: 28,
+                                                )
+                                              : const SizedBox.shrink(),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       );
@@ -256,40 +332,6 @@ class LevelPage extends StatelessWidget {
           ),
         ),
           );
-        },
-      ),
-    );
-  }
-
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFFFE5CC) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade700,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade800,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: () {
-          if (title == 'Challenges') {
-            Navigator.pop(context);
-          } else if (title == 'Flashcards') {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const FlashcardListPage()),
-            );
-          }
         },
       ),
     );

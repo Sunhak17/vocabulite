@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../model/article.dart';
 import '../data/levels_repository.dart';
+import '../data/bookmark_repository.dart';
 import 'article_detail.dart';
 import 'flashcard_list_page.dart';
 import 'quiz_home_page.dart';
+import 'home_page.dart';
+import 'favorites_page.dart';
 
 class LevelArticlesPage extends StatefulWidget {
   final String level;
@@ -128,12 +131,16 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
   }
 
   Widget _buildArticleCard(BuildContext context, Article article) {
+    // Calculate reading metrics
+    int wordCount = article.content.split(' ').length;
+    int readingTime = (wordCount / 200).ceil(); // Assuming 200 words per minute
+    
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF9E6),
-        borderRadius: BorderRadius.circular(16),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -145,60 +152,88 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            article.title,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Color(0xFFD97706),
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Level: ${article.level}',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Color(0xFFD97706),
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            article.summary,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade700,
-              height: 1.4,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ArticleDetail(article: article),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  article.title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF8B4513),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
                 ),
-                elevation: 2,
               ),
-              child: const Text(
-                'Take Challenges',
+              IconButton(
+                icon: Icon(
+                  BookmarkRepository.isBookmarked(article.id)
+                      ? Icons.bookmark
+                      : Icons.bookmark_border,
+                  color: const Color(0xFF0D47A1),
+                ),
+                onPressed: () {
+                  setState(() {
+                    BookmarkRepository.toggleBookmark(article.id);
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        BookmarkRepository.isBookmarked(article.id)
+                            ? 'Added to bookmarks'
+                            : 'Removed from bookmarks',
+                      ),
+                      duration: const Duration(seconds: 1),
+                    ),
+                  );
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Text(
+                '$readingTime min read',
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w600,
+                  color: Colors.grey[600],
                 ),
               ),
+              const SizedBox(width: 16),
+              Icon(Icons.text_fields, size: 16, color: Colors.grey[600]),
+              const SizedBox(width: 4),
+              Text(
+                '$wordCount words',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => ArticleDetail(article: article),
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF0D47A1),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: const Text(
+              'Take Challenges',
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -220,47 +255,20 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
               ),
             ),
             child: SafeArea(
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text('🇬🇧', style: TextStyle(fontSize: 24)),
-                      ),
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.emoji_events, color: Colors.orange, size: 20),
-                                const SizedBox(width: 4),
-                                const Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(Icons.notifications, color: Colors.orange, size: 20),
-                          ),
-                        ],
-                      ),
-                    ],
+                  const Text(
+                    'Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ],
               ),
@@ -270,60 +278,71 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildMenuItem(context, 'Challenges', Icons.bolt, true),
-                _buildMenuItem(context, 'Quiz', Icons.quiz_outlined, false),
-                _buildMenuItem(context, 'Flashcards', Icons.style_outlined, false),
-                const Divider(height: 32),
-                _buildMenuItem(context, 'Profile', Icons.person_outline, false),
+                ListTile(
+                  leading: const Icon(Icons.home, color: Color(0xFF1976D2)),
+                  title: const Text('Home'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.article, color: Color(0xFFD97706)),
+                  title: const Text('Articles'),
+                  selected: true,
+                  onTap: () => Navigator.pop(context),
+                ),
+                ListTile(
+                  leading: const Icon(Icons.bookmark, color: Color(0xFFE91E63)),
+                  title: const Text('Favorites'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FavoritesPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.quiz, color: Color(0xFF1976D2)),
+                  title: const Text('Quiz'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const QuizHomePage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.style, color: Color(0xFF8B4513)),
+                  title: const Text('Flashcards'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FlashcardListPage()),
+                    );
+                  },
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.person, color: Colors.grey),
+                  title: const Text('Profile'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile coming soon!')),
+                    );
+                  },
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildMenuItem(BuildContext context, String title, IconData icon, bool isSelected) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFFFE5CC) : Colors.transparent,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade700,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade800,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        onTap: () {
-          if (title == 'Flashcards') {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const FlashcardListPage()),
-            );
-          } else if (title == 'Quiz') {
-            Navigator.pop(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const QuizHomePage()),
-            );
-          } else if (title == 'Challenges') {
-            Navigator.pop(context);
-          } else if (title == 'Profile') {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile coming soon!')),
-            );
-          }
-        },
       ),
     );
   }

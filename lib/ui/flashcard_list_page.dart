@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import '../data/flashcard_repository.dart';
 import '../model/flashcard.dart';
 import 'flashcard_detail_page.dart';
+import 'home_page.dart';
+import 'level_page.dart';
+import 'quiz_home_page.dart';
+import 'favorites_page.dart';
 
 class FlashcardListPage extends StatefulWidget {
   const FlashcardListPage({super.key});
@@ -17,7 +21,10 @@ class _FlashcardListPageState extends State<FlashcardListPage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
+      drawer: _buildDrawer(context),
+      body: Builder(
+        builder: (BuildContext scaffoldContext) {
+          return SafeArea(
         child: Column(
           children: [
             // Header
@@ -33,8 +40,8 @@ class _FlashcardListPageState extends State<FlashcardListPage> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.menu, color: Colors.white),
+                    onPressed: () => Scaffold.of(scaffoldContext).openDrawer(),
                   ),
                   const SizedBox(width: 8),
                   Icon(Icons.waving_hand, color: Colors.white, size: 28),
@@ -158,6 +165,114 @@ class _FlashcardListPageState extends State<FlashcardListPage> {
             ),
           ],
         ),
+      );
+        },
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0D47A1), Color(0xFF1976D2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: SafeArea(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Menu',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.home, color: Color(0xFF1976D2)),
+                  title: const Text('Home'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomePage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.article, color: Color(0xFFD97706)),
+                  title: const Text('Articles'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const LevelPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.bookmark, color: Color(0xFFE91E63)),
+                  title: const Text('Favorites'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const FavoritesPage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.quiz, color: Color(0xFF1976D2)),
+                  title: const Text('Quiz'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const QuizHomePage()),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.style, color: Color(0xFF8B4513)),
+                  title: const Text('Flashcards'),
+                  selected: true,
+                  onTap: () => Navigator.pop(context),
+                ),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.person, color: Colors.grey),
+                  title: const Text('Profile'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile coming soon!')),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

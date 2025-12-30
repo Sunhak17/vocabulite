@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../model/quiz.dart';
+import '../data/user_progress_repository.dart';
 
-class QuizResultPage extends StatelessWidget {
+class QuizResultPage extends StatefulWidget {
   final List<QuizResult> results;
   final String level;
 
@@ -12,9 +13,38 @@ class QuizResultPage extends StatelessWidget {
   });
 
   @override
+  State<QuizResultPage> createState() => _QuizResultPageState();
+}
+
+class _QuizResultPageState extends State<QuizResultPage> {
+  bool _levelUnlocked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkLevelCompletion();
+  }
+
+  void _checkLevelCompletion() {
+    final correctCount = widget.results.where((r) => r.isCorrect).length;
+    final totalCount = widget.results.length;
+    final percentage = (correctCount / totalCount * 100).round();
+
+    // Mark level as complete if score is 70% or higher
+    if (percentage >= 70 && !UserProgressRepository.isLevelCompleted(widget.level)) {
+      UserProgressRepository.completeLevel(widget.level);
+      setState(() {
+        _levelUnlocked = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final correctCount = results.where((r) => r.isCorrect).length;
-    final totalCount = results.length;
+    final correctCount = widget.results.where((r) => r.isCorrect).length;
+    final totalCount = widget.results.length;
+    final percentage = (correctCount / totalCount * 100).round();
+    final passed = percentage >= 70;
 
     return Scaffold(
       body: Container(
@@ -74,36 +104,82 @@ class QuizResultPage extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF59E0B),
+                    color: passed ? const Color(0xFF43A047) : const Color(0xFFF59E0B),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
                     children: [
-                      const Text(
-                        'My Favorite Hobby',
-                        style: TextStyle(
-                          fontSize: 18,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            'My Favorite Hobby',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              'Level: ${widget.level}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '$correctCount / $totalCount correct ($percentage%)',
+                        style: const TextStyle(
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
                       ),
-                      const SizedBox(width: 20),
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD97706),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'Level: $level',
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
+                      const SizedBox(height: 8),
+                      Text(
+                        passed ? '✓ Level Completed!' : 'Keep practicing!',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
+                      if (_levelUnlocked) ...[
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.3),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.lock_open, color: Colors.white, size: 16),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Next level unlocked: ${UserProgressRepository.getNextLevel() ?? ""}',
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -115,9 +191,9 @@ class QuizResultPage extends StatelessWidget {
               Expanded(
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  itemCount: results.length,
+                  itemCount: widget.results.length,
                   itemBuilder: (context, index) {
-                    final result = results[index];
+                    final result = widget.results[index];
                     return Container(
                       margin: const EdgeInsets.only(bottom: 12),
                       padding: const EdgeInsets.all(16),
