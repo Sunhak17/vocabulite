@@ -25,7 +25,7 @@ class SplashPage extends StatelessWidget {
                 style: TextStyle(
                   color: Color.fromARGB(255, 255, 200, 1),
                   fontSize: 54,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
               const SizedBox(height: 24),
@@ -64,17 +64,22 @@ class SplashPage extends StatelessWidget {
               const SizedBox(height: 32),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow[700],
+                  backgroundColor: Color(0xFFFFC107),
                   foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 4,
                 ),
                 onPressed: () => Navigator.pushNamed(context, '/levels'),
                 child: const Text(
                   'Get Started',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 0.5,
+                  ),
                 ),
               ),
             ],

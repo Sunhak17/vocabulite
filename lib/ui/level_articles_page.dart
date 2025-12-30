@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../model/article.dart';
 import '../data/levels_repository.dart';
 import 'article_detail.dart';
+import 'flashcard_list_page.dart';
+import 'quiz_home_page.dart';
 
 class LevelArticlesPage extends StatefulWidget {
   final String level;
@@ -24,7 +26,10 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
+      drawer: _buildDrawer(context),
+      body: Builder(
+        builder: (BuildContext scaffoldContext) {
+          return SafeArea(
         child: Column(
           children: [
             // Header
@@ -65,7 +70,7 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.menu),
-                    onPressed: () {},
+                    onPressed: () => Scaffold.of(scaffoldContext).openDrawer(),
                   ),
                   Expanded(
                     child: Container(
@@ -116,8 +121,10 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
             ),
           ],
         ),
-      ),
-    );
+      );
+    },
+  ),
+);
   }
 
   Widget _buildArticleCard(BuildContext context, Article article) {
@@ -195,6 +202,128 @@ class _LevelArticlesPageState extends State<LevelArticlesPage> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildDrawer(BuildContext context) {
+    return Drawer(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color(0xFF0D47A1), Color(0xFF1976D2)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: SafeArea(
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Text('🇬🇧', style: TextStyle(fontSize: 24)),
+                      ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.emoji_events, color: Colors.orange, size: 20),
+                                const SizedBox(width: 4),
+                                const Text('0', style: TextStyle(fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(Icons.notifications, color: Colors.orange, size: 20),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildMenuItem(context, 'Challenges', Icons.bolt, true),
+                _buildMenuItem(context, 'Quiz', Icons.quiz_outlined, false),
+                _buildMenuItem(context, 'Flashcards', Icons.style_outlined, false),
+                const Divider(height: 32),
+                _buildMenuItem(context, 'Profile', Icons.person_outline, false),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, String title, IconData icon, bool isSelected) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFFFE5CC) : Colors.transparent,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: ListTile(
+        leading: Icon(
+          icon,
+          color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade700,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? const Color(0xFFFF8F00) : Colors.grey.shade800,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
+        ),
+        onTap: () {
+          if (title == 'Flashcards') {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const FlashcardListPage()),
+            );
+          } else if (title == 'Quiz') {
+            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const QuizHomePage()),
+            );
+          } else if (title == 'Challenges') {
+            Navigator.pop(context);
+          } else if (title == 'Profile') {
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Profile coming soon!')),
+            );
+          }
+        },
       ),
     );
   }

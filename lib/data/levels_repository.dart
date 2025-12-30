@@ -7,7 +7,7 @@ class LevelsRepository {
 
   static Future<List<Article>> loadAll() async {
     if (_cache != null) return _cache!;
-    final raw = await rootBundle.loadString('assets/levels.json');
+    final raw = await rootBundle.loadString('assets/data/levels.json');
     final list = jsonDecode(raw) as List<dynamic>;
     _cache = list.map((e) => Article.fromJson(e as Map<String, dynamic>)).toList();
     return _cache!;
