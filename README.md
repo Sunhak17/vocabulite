@@ -29,11 +29,6 @@ A comprehensive English learning mobile application built with Flutter, designed
 - Word definitions and example sentences
 - Easy access to review saved words
 
-### ⭐ Favorites/Bookmarks
-- Bookmark favorite articles for later reading
-- Dedicated favorites page accessible from sidebar
-- Quick access to saved content across all levels
-
 ### 👤 User Profile
 - Personalized onboarding experience
 - User name display throughout the app
@@ -96,7 +91,6 @@ flutter run
 - Tap-to-reveal definitions
 - Example sentences for context
 - Add words directly to flashcards
-- Add articles to Favorite
 
 ### Quiz System
 - Multiple choice format
@@ -109,10 +103,9 @@ flutter run
   - Next level unlock alert
 
 ### Navigation
-Consistent sidebar menu across all pages:
+Consistent bottom navigation bar across main pages:
 - 🏠 Home
 - 📄 Articles
-- ⭐ Favorites
 - 🎯 Quiz
 - 💳 Flashcards
 - 👤 Profile
@@ -141,7 +134,7 @@ For questions or feedback, please open an issue on GitHub.
 ## Credits
 
 **Course**: Fundamental of Mobile Development  
-**Lecturer**: Ronan Ogor  
+**Lecturer**: Lect.Ronan Ogor  
 **Institution**: Cambodia Academy of Digital Technology
 
 ---
