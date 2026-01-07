@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-import '../model/quiz.dart';
-import '../data/user_progress_repository.dart';
+import '../../../models/quiz.dart';
+import '../../../models/tier.dart';
+import '../../../data/user_progress_repository.dart';
 
 class QuizResultPage extends StatefulWidget {
   final List<QuizResult> results;
-  final String level;
+  final String tier;
+  final String? articleId;
 
   const QuizResultPage({
     super.key,
     required this.results,
-    required this.level,
+    required this.tier,
+    this.articleId,
   });
 
   @override
@@ -17,26 +20,60 @@ class QuizResultPage extends StatefulWidget {
 }
 
 class _QuizResultPageState extends State<QuizResultPage> {
-  bool _levelUnlocked = false;
+  bool _TierUnlocked = false;
+  String? _nextTier;
 
   @override
   void initState() {
     super.initState();
-    _checkLevelCompletion();
+    _checkTierCompletion();
   }
 
-  void _checkLevelCompletion() {
+  void _checkTierCompletion() async {
     final correctCount = widget.results.where((r) => r.isCorrect).length;
     final totalCount = widget.results.length;
     final percentage = (correctCount / totalCount * 100).round();
 
-    // Mark level as complete if score is 70% or higher
-    if (percentage >= 70 && !UserProgressRepository.isLevelCompleted(widget.level)) {
-      UserProgressRepository.completeLevel(widget.level);
+    await saveQuizResult(
+      tier: widget.tier,
+      score: correctCount,
+      totalQuestions: totalCount,
+      articleId: widget.articleId,
+    );
+
+    if (percentage >= 70 &&
+        currentUser != null &&
+        !currentUser!.completedTiers.contains(widget.tier.toUpperCase())) {
+      
+      currentUser!.completeTier(widget.tier.toUpperCase());
+
+      const tierOrder = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+      final currentIndex = tierOrder.indexOf(widget.tier.toUpperCase());
+      if (currentIndex != -1 && currentIndex < tierOrder.length - 1) {
+        final nextTierName = tierOrder[currentIndex + 1];
+        currentUser!.currentTier = Tier.values.byName(nextTierName);
+      }
+
+      if (widget.articleId != null) {
+        currentUser!.completeArticle(widget.articleId!);
+      }
+
+      await saveUserData();
+
+      _nextTier = _getNextTierInSequence(widget.tier);
       setState(() {
-        _levelUnlocked = true;
+        _TierUnlocked = true;
       });
     }
+  }
+
+  String? _getNextTierInSequence(String currentTier) {
+    const Tiers = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+    final index = Tiers.indexOf(currentTier.toUpperCase());
+    if (index != -1 && index < Tiers.length - 1) {
+      return Tiers[index + 1];
+    }
+    return null;
   }
 
   @override
@@ -55,17 +92,20 @@ class _QuizResultPageState extends State<QuizResultPage> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              // Header
-              Padding(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 28,
+                      ),
                       onPressed: () {
                         Navigator.pop(context);
                         Navigator.pop(context);
@@ -86,7 +126,6 @@ class _QuizResultPageState extends State<QuizResultPage> {
 
               const SizedBox(height: 20),
 
-              // Result title
               const Text(
                 'Result',
                 style: TextStyle(
@@ -98,13 +137,14 @@ class _QuizResultPageState extends State<QuizResultPage> {
 
               const SizedBox(height: 20),
 
-              // Score card
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: passed ? const Color(0xFF43A047) : const Color(0xFFF59E0B),
+                    color: passed
+                        ? const Color(0xFF43A047)
+                        : const Color(0xFFF59E0B),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Column(
@@ -122,13 +162,16 @@ class _QuizResultPageState extends State<QuizResultPage> {
                           ),
                           const SizedBox(width: 20),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Color.fromRGBO(255, 255, 255, 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
-                              'Level: ${widget.level}',
+                              'tier: ${widget.tier}',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -149,28 +192,37 @@ class _QuizResultPageState extends State<QuizResultPage> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        passed ? '✓ Level Completed!' : 'Keep practicing!',
+                        passed ? '✓ tier Completed!' : 'Keep practicing!',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           color: Colors.white,
                         ),
                       ),
-                      if (_levelUnlocked) ...[
+                      if (_TierUnlocked) ...[
                         const SizedBox(height: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Color.fromRGBO(255, 255, 255, 0.3),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.lock_open, color: Colors.white, size: 16),
+                              const Icon(
+                                Icons.lock_open,
+                                color: Colors.white,
+                                size: 16,
+                              ),
                               const SizedBox(width: 4),
                               Text(
-                                'Next level unlocked: ${UserProgressRepository.getNextLevel() ?? ""}',
+                                _nextTier != null
+                                    ? 'Next tier unlocked: $_nextTier'
+                                    : 'tier completed!',
                                 style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.white,
@@ -239,7 +291,6 @@ class _QuizResultPageState extends State<QuizResultPage> {
                 ),
               ),
 
-              // Next button
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: SizedBox(
@@ -271,7 +322,6 @@ class _QuizResultPageState extends State<QuizResultPage> {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }

@@ -1,44 +1,936 @@
-import '../model/quiz.dart';
+import '../models/quiz.dart';
+import '../models/tier.dart';
 
-class QuizRepository {
-  static List<Quiz> getSampleQuizzes() {
-    return [
-      Quiz(
+final dummyQuizzes = [
+  Quiz(
         question: 'I usually read for ___ in the evening.',
         options: ['one hour', '3 days', 'a week', 'one month'],
         correctAnswer: 'one hour',
-        level: 'A2',
+        tier: Tier.A2,
       ),
       Quiz(
         question: 'Which word is a type of exciting story?',
         options: ['Homework', 'Adventure', 'Sad', 'School'],
         correctAnswer: 'Adventure',
-        level: 'A2',
+        tier: Tier.A2,
       ),
       Quiz(
         question: 'My hobby is ___ skateboarding.',
         options: ['doing', 'playing', 'making', 'going'],
         correctAnswer: 'doing',
-        level: 'A2',
+        tier: Tier.A2,
       ),
       Quiz(
         question: 'What do you do in your ___ time?',
         options: ['free', 'busy', 'work', 'sleep'],
         correctAnswer: 'free',
-        level: 'A2',
+        tier: Tier.A2,
       ),
       Quiz(
         question: 'She enjoys ___ novels.',
         options: ['read', 'reading', 'to read', 'reads'],
         correctAnswer: 'reading',
-        level: 'A2',
+        tier: Tier.A2,
       ),
-    ];
-  }
+  // A1-001: My First Words
+  Quiz(
+        question: 'What is the girl\'s name?',
+        options: ['Mary', 'Sarah', 'Emma', 'Lucy'],
+        correctAnswer: 'Sarah',
+        tier: Tier.A1,
+        articleId: 'a1-001',
+      ),
+      Quiz(
+        question: 'What does Sarah like to do every day?',
+        options: ['play games', 'watch TV', 'read books', 'cook food'],
+        correctAnswer: 'read books',
+        tier: Tier.A1,
+        articleId: 'a1-001',
+      ),
+      Quiz(
+        question: 'Where does Sarah say hello to her friends?',
+        options: ['at school', 'at home', 'in the park', 'at the store'],
+        correctAnswer: 'at school',
+        tier: Tier.A1,
+        articleId: 'a1-001',
+      ),
+      Quiz(
+        question: 'What helps Sarah talk better?',
+        options: [
+          'watching TV',
+          'learning new words',
+          'eating food',
+          'playing games',
+        ],
+        correctAnswer: 'learning new words',
+        tier: Tier.A1,
+        articleId: 'a1-001',
+      ),
+      Quiz(
+        question: 'Sarah says ___ to her friends.',
+        options: ['goodbye', 'hello', 'sorry', 'thank you'],
+        correctAnswer: 'hello',
+        tier: Tier.A1,
+        articleId: 'a1-001',
+      ),
 
-  static List<Quiz> getQuizzesByLevel(String level) {
-    return getSampleQuizzes()
-        .where((quiz) => quiz.level == level)
-        .toList();
-  }
-}
+      // A1-002: Numbers and Colors
+      Quiz(
+        question: 'What is the favorite color mentioned?',
+        options: ['red', 'green', 'blue', 'yellow'],
+        correctAnswer: 'blue',
+        tier: Tier.A1,
+        articleId: 'a1-002',
+      ),
+      Quiz(
+        question: 'What color is the sky?',
+        options: ['green', 'red', 'blue', 'yellow'],
+        correctAnswer: 'blue',
+        tier: Tier.A1,
+        articleId: 'a1-002',
+      ),
+      Quiz(
+        question: 'What color is the grass?',
+        options: ['blue', 'green', 'red', 'brown'],
+        correctAnswer: 'green',
+        tier: Tier.A1,
+        articleId: 'a1-002',
+      ),
+      Quiz(
+        question: 'Can the person count from one to ___?',
+        options: ['five', 'ten', 'twenty', 'hundred'],
+        correctAnswer: 'ten',
+        tier: Tier.A1,
+        articleId: 'a1-002',
+      ),
+      Quiz(
+        question: 'Colors are seen ___ every day.',
+        options: ['nowhere', 'around me', 'in books', 'on TV'],
+        correctAnswer: 'around me',
+        tier: Tier.A1,
+        articleId: 'a1-002',
+      ),
+
+      // A1-003: My Family
+      Quiz(
+        question: 'What kind of family does the person have?',
+        options: ['big', 'small', 'large', 'huge'],
+        correctAnswer: 'small',
+        tier: Tier.A1,
+        articleId: 'a1-003',
+      ),
+      Quiz(
+        question: 'How many brothers are mentioned?',
+        options: ['two', 'three', 'one', 'none'],
+        correctAnswer: 'one',
+        tier: Tier.A1,
+        articleId: 'a1-003',
+      ),
+      Quiz(
+        question: 'Where do they play together?',
+        options: ['at home', 'at school', 'in the park', 'at the beach'],
+        correctAnswer: 'in the park',
+        tier: Tier.A1,
+        articleId: 'a1-003',
+      ),
+      Quiz(
+        question: 'How are the mother and father described?',
+        options: ['funny', 'kind', 'tall', 'busy'],
+        correctAnswer: 'kind',
+        tier: Tier.A1,
+        articleId: 'a1-003',
+      ),
+      Quiz(
+        question: 'The person ___ their family very much.',
+        options: ['loves', 'likes', 'misses', 'helps'],
+        correctAnswer: 'loves',
+        tier: Tier.A1,
+        articleId: 'a1-003',
+      ),
+
+      // A2-001: My Favorite Hobby
+      Quiz(
+        question: 'What is the person\'s favorite hobby?',
+        options: [
+          'playing sports',
+          'reading books',
+          'watching movies',
+          'drawing pictures',
+        ],
+        correctAnswer: 'reading books',
+        tier: Tier.A2,
+        articleId: 'a2-001',
+      ),
+      Quiz(
+        question: 'When does the person usually read?',
+        options: ['in the morning', 'at lunch', 'in the evening', 'at night'],
+        correctAnswer: 'in the evening',
+        tier: Tier.A2,
+        articleId: 'a2-001',
+      ),
+      Quiz(
+        question: 'What type of books are mentioned as favorite?',
+        options: [
+          'history books',
+          'adventure stories',
+          'science books',
+          'comic books',
+        ],
+        correctAnswer: 'adventure stories',
+        tier: Tier.A2,
+        articleId: 'a2-001',
+      ),
+      Quiz(
+        question: 'How long does the person usually read?',
+        options: ['30 minutes', 'one hour', 'two hours', 'all day'],
+        correctAnswer: 'one hour',
+        tier: Tier.A2,
+        articleId: 'a2-001',
+      ),
+      Quiz(
+        question: 'Reading helps the person improve their ___.',
+        options: ['math', 'English', 'science', 'music'],
+        correctAnswer: 'English',
+        tier: Tier.A2,
+        articleId: 'a2-001',
+      ),
+
+      // A2-002: A Day at the Park
+      Quiz(
+        question: 'When did the person go to the park?',
+        options: ['today', 'yesterday', 'tomorrow', 'last week'],
+        correctAnswer: 'yesterday',
+        tier: Tier.A2,
+        articleId: 'a2-002',
+      ),
+      Quiz(
+        question: 'Who went to the park together?',
+        options: ['friends', 'family', 'classmates', 'alone'],
+        correctAnswer: 'family',
+        tier: Tier.A2,
+        articleId: 'a2-002',
+      ),
+      Quiz(
+        question: 'What did they do at the park?',
+        options: ['study', 'had a picnic', 'shop', 'clean'],
+        correctAnswer: 'had a picnic',
+        tier: Tier.A2,
+        articleId: 'a2-002',
+      ),
+      Quiz(
+        question: 'How was the weather?',
+        options: ['rainy', 'cold', 'sunny and warm', 'cloudy'],
+        correctAnswer: 'sunny and warm',
+        tier: Tier.A2,
+        articleId: 'a2-002',
+      ),
+      Quiz(
+        question: 'The day was ___.',
+        options: ['boring', 'exciting', 'sad', 'tiring'],
+        correctAnswer: 'exciting',
+        tier: Tier.A2,
+        articleId: 'a2-002',
+      ),
+
+      // A2-003: My Favorite Food
+      Quiz(
+        question: 'What is the person\'s favorite food?',
+        options: ['burger', 'pizza', 'pasta', 'sandwich'],
+        correctAnswer: 'pizza',
+        tier: Tier.A2,
+        articleId: 'a2-003',
+      ),
+      Quiz(
+        question: 'When does the person eat pizza?',
+        options: ['every day', 'on weekdays', 'on weekends', 'never'],
+        correctAnswer: 'on weekends',
+        tier: Tier.A2,
+        articleId: 'a2-003',
+      ),
+      Quiz(
+        question: 'Who makes pizza at home?',
+        options: ['the person alone', 'friends', 'family', 'nobody'],
+        correctAnswer: 'family',
+        tier: Tier.A2,
+        articleId: 'a2-003',
+      ),
+      Quiz(
+        question: 'What does pizza have on it?',
+        options: [
+          'only cheese',
+          'cheese and sauce',
+          'cheese, sauce, and toppings',
+          'just bread',
+        ],
+        correctAnswer: 'cheese, sauce, and toppings',
+        tier: Tier.A2,
+        articleId: 'a2-003',
+      ),
+      Quiz(
+        question: 'What dessert is mentioned?',
+        options: ['cake', 'cookies', 'ice cream', 'candy'],
+        correctAnswer: 'ice cream',
+        tier: Tier.A2,
+        articleId: 'a2-003',
+      ),
+
+      // B1-001: Travel Adventures
+      Quiz(
+        question: 'Where did the person travel?',
+        options: [
+          'to the beach',
+          'to the mountains',
+          'to the city',
+          'to the desert',
+        ],
+        correctAnswer: 'to the mountains',
+        tier: Tier.B1,
+        articleId: 'b1-001',
+      ),
+      Quiz(
+        question: 'When did this trip happen?',
+        options: ['last winter', 'last summer', 'this year', 'next month'],
+        correctAnswer: 'last summer',
+        tier: Tier.B1,
+        articleId: 'b1-001',
+      ),
+      Quiz(
+        question: 'How was the journey described?',
+        options: [
+          'short and boring',
+          'long but beautiful',
+          'quick and easy',
+          'difficult and tiring',
+        ],
+        correctAnswer: 'long but beautiful',
+        tier: Tier.B1,
+        articleId: 'b1-001',
+      ),
+      Quiz(
+        question: 'What did the person see during the trip?',
+        options: [
+          'tall buildings',
+          'tall peaks and green valleys',
+          'ocean waves',
+          'city streets',
+        ],
+        correctAnswer: 'tall peaks and green valleys',
+        tier: Tier.B1,
+        articleId: 'b1-001',
+      ),
+      Quiz(
+        question: 'Traveling helps the person learn about ___.',
+        options: ['cooking', 'different cultures', 'sports', 'technology'],
+        correctAnswer: 'different cultures',
+        tier: Tier.B1,
+        articleId: 'b1-001',
+      ),
+
+      // B1-002: Shopping Experience
+      Quiz(
+        question: 'What is the person\'s shopping hobby?',
+        options: [
+          'buying food',
+          'shopping for clothes',
+          'buying books',
+          'shopping for electronics',
+        ],
+        correctAnswer: 'shopping for clothes',
+        tier: Tier.B1,
+        articleId: 'b1-002',
+      ),
+      Quiz(
+        question: 'What did the person buy last week?',
+        options: [
+          'a shirt and pants',
+          'a jacket and shoes',
+          'a dress and bag',
+          'a hat and gloves',
+        ],
+        correctAnswer: 'a jacket and shoes',
+        tier: Tier.B1,
+        articleId: 'b1-002',
+      ),
+      Quiz(
+        question: 'What color was the jacket?',
+        options: ['red', 'blue', 'green', 'black'],
+        correctAnswer: 'blue',
+        tier: Tier.B1,
+        articleId: 'b1-002',
+      ),
+      Quiz(
+        question: 'How was the shopkeeper?',
+        options: [
+          'rude and mean',
+          'helpful and friendly',
+          'busy and tired',
+          'quiet and shy',
+        ],
+        correctAnswer: 'helpful and friendly',
+        tier: Tier.B1,
+        articleId: 'b1-002',
+      ),
+      Quiz(
+        question: 'What does the person do before buying?',
+        options: [
+          'ask friends',
+          'compare prices',
+          'read reviews',
+          'try everything',
+        ],
+        correctAnswer: 'compare prices',
+        tier: Tier.B1,
+        articleId: 'b1-002',
+      ),
+
+      // B1-003: Health and Fitness
+      Quiz(
+        question: 'How often does the person exercise?',
+        options: [
+          'every day',
+          'twice a week',
+          'three times a week',
+          'once a month',
+        ],
+        correctAnswer: 'three times a week',
+        tier: Tier.B1,
+        articleId: 'b1-003',
+      ),
+      Quiz(
+        question: 'Where does the person exercise?',
+        options: ['at home', 'at the gym', 'in the park', 'at school'],
+        correctAnswer: 'at the gym',
+        tier: Tier.B1,
+        articleId: 'b1-003',
+      ),
+      Quiz(
+        question: 'What type of food does the person try to eat?',
+        options: ['fast food', 'healthy food', 'sweets', 'junk food'],
+        correctAnswer: 'healthy food',
+        tier: Tier.B1,
+        articleId: 'b1-003',
+      ),
+      Quiz(
+        question: 'What helps the person feel energetic?',
+        options: [
+          'watching TV',
+          'drinking water and sleeping',
+          'playing games',
+          'eating candy',
+        ],
+        correctAnswer: 'drinking water and sleeping',
+        tier: Tier.B1,
+        articleId: 'b1-003',
+      ),
+      Quiz(
+        question: 'A healthy lifestyle makes the person ___.',
+        options: ['tired', 'sad', 'happy', 'angry'],
+        correctAnswer: 'happy',
+        tier: Tier.B1,
+        articleId: 'b1-003',
+      ),
+
+      // B2-001: Work and Career
+      Quiz(
+        question: 'What field is the person interested in working?',
+        options: ['education', 'medicine', 'technology', 'business'],
+        correctAnswer: 'technology',
+        tier: Tier.B2,
+        articleId: 'b2-001',
+      ),
+      Quiz(
+        question: 'Why is the person interested in this field?',
+        options: [
+          'it pays well',
+          'it is exciting and always changing',
+          'it is easy',
+          'it is popular',
+        ],
+        correctAnswer: 'it is exciting and always changing',
+        tier: Tier.B2,
+        articleId: 'b2-001',
+      ),
+      Quiz(
+        question: 'What helps people advance in their careers?',
+        options: ['luck', 'professional development', 'age', 'location'],
+        correctAnswer: 'professional development',
+        tier: Tier.B2,
+        articleId: 'b2-001',
+      ),
+      Quiz(
+        question: 'What skills are essential for success in any job?',
+        options: [
+          'technical skills',
+          'good communication skills',
+          'sports skills',
+          'art skills',
+        ],
+        correctAnswer: 'good communication skills',
+        tier: Tier.B2,
+        articleId: 'b2-001',
+      ),
+      Quiz(
+        question: 'Choosing a career is an ___ decision.',
+        options: ['easy', 'unimportant', 'important', 'simple'],
+        correctAnswer: 'important',
+        tier: Tier.B2,
+        articleId: 'b2-001',
+      ),
+
+      // B2-002: Technology Today
+      Quiz(
+        question: 'What devices do we use every day?',
+        options: [
+          'typewriters',
+          'smartphones and computers',
+          'radios',
+          'calculators',
+        ],
+        correctAnswer: 'smartphones and computers',
+        tier: Tier.B2,
+        articleId: 'b2-002',
+      ),
+      Quiz(
+        question: 'How has technology changed our lives?',
+        options: [
+          'not at all',
+          'a little bit',
+          'dramatically',
+          'negatively only',
+        ],
+        correctAnswer: 'dramatically',
+        tier: Tier.B2,
+        articleId: 'b2-002',
+      ),
+      Quiz(
+        question: 'What do these tools help us do?',
+        options: [
+          'work faster and stay connected',
+          'sleep better',
+          'eat healthier',
+          'exercise more',
+        ],
+        correctAnswer: 'work faster and stay connected',
+        tier: Tier.B2,
+        articleId: 'b2-002',
+      ),
+      Quiz(
+        question: 'What should we be careful about?',
+        options: [
+          'using technology at all',
+          'spending too much time on screens',
+          'buying new devices',
+          'learning new apps',
+        ],
+        correctAnswer: 'spending too much time on screens',
+        tier: Tier.B2,
+        articleId: 'b2-002',
+      ),
+      Quiz(
+        question: 'We should use technology ___.',
+        options: [
+          'never',
+          'all the time',
+          'wisely and responsibly',
+          'only for games',
+        ],
+        correctAnswer: 'wisely and responsibly',
+        tier: Tier.B2,
+        articleId: 'b2-002',
+      ),
+
+      // B2-003: Environmental Issues
+      Quiz(
+        question: 'Whose responsibility is protecting the environment?',
+        options: [
+          'government only',
+          'scientists only',
+          'everyone\'s',
+          'nobody\'s',
+        ],
+        correctAnswer: 'everyone\'s',
+        tier: Tier.B2,
+        articleId: 'b2-003',
+      ),
+      Quiz(
+        question: 'What challenge is mentioned?',
+        options: ['poverty', 'climate change', 'education', 'healthcare'],
+        correctAnswer: 'climate change',
+        tier: Tier.B2,
+        articleId: 'b2-003',
+      ),
+      Quiz(
+        question: 'How can we help the environment?',
+        options: [
+          'by driving more',
+          'by reducing waste and recycling',
+          'by buying more things',
+          'by using more energy',
+        ],
+        correctAnswer: 'by reducing waste and recycling',
+        tier: Tier.B2,
+        articleId: 'b2-003',
+      ),
+      Quiz(
+        question: 'What else is important for the environment?',
+        options: [
+          'building more cities',
+          'planting trees and protecting wildlife',
+          'using more plastic',
+          'cutting forests',
+        ],
+        correctAnswer: 'planting trees and protecting wildlife',
+        tier: Tier.B2,
+        articleId: 'b2-003',
+      ),
+      Quiz(
+        question: 'What can improve our planet?',
+        options: [
+          'big changes only',
+          'small changes in daily habits',
+          'no changes',
+          'waiting for others',
+        ],
+        correctAnswer: 'small changes in daily habits',
+        tier: Tier.B2,
+        articleId: 'b2-003',
+      ),
+
+      // C1-001: Debates and Opinions
+      Quiz(
+        question: 'What does engaging in debates require?',
+        options: [
+          'loud voice',
+          'critical thinking and clear communication',
+          'being stubborn',
+          'winning always',
+        ],
+        correctAnswer: 'critical thinking and clear communication',
+        tier: Tier.C1,
+        articleId: 'c1-001',
+      ),
+      Quiz(
+        question: 'When presenting arguments, what should we consider?',
+        options: [
+          'only our view',
+          'different perspectives',
+          'popular opinion',
+          'traditional views',
+        ],
+        correctAnswer: 'different perspectives',
+        tier: Tier.C1,
+        articleId: 'c1-001',
+      ),
+      Quiz(
+        question: 'What helps improve understanding of complex issues?',
+        options: [
+          'watching TV',
+          'reading diverse books and articles',
+          'listening to one source',
+          'avoiding discussions',
+        ],
+        correctAnswer: 'reading diverse books and articles',
+        tier: Tier.C1,
+        articleId: 'c1-001',
+      ),
+      Quiz(
+        question: 'How should we express our opinions?',
+        options: ['aggressively', 'respectfully', 'loudly', 'rarely'],
+        correctAnswer: 'respectfully',
+        tier: Tier.C1,
+        articleId: 'c1-001',
+      ),
+      Quiz(
+        question: 'Effective debating develops through ___.',
+        options: ['talent only', 'practice', 'age', 'education tier'],
+        correctAnswer: 'practice',
+        tier: Tier.C1,
+        articleId: 'c1-001',
+      ),
+
+      // C1-002: Cultural Differences
+      Quiz(
+        question: 'Why is understanding cultural differences essential?',
+        options: [
+          'for travel only',
+          'in our globalized world',
+          'for work only',
+          'it is not essential',
+        ],
+        correctAnswer: 'in our globalized world',
+        tier: Tier.C1,
+        articleId: 'c1-002',
+      ),
+      Quiz(
+        question: 'What do different societies have?',
+        options: [
+          'same customs',
+          'unique customs and traditions',
+          'no traditions',
+          'similar ways',
+        ],
+        correctAnswer: 'unique customs and traditions',
+        tier: Tier.C1,
+        articleId: 'c1-002',
+      ),
+      Quiz(
+        question: 'How can we learn about other cultures?',
+        options: [
+          'by staying home',
+          'through books and articles',
+          'by ignoring them',
+          'by judging them',
+        ],
+        correctAnswer: 'through books and articles',
+        tier: Tier.C1,
+        articleId: 'c1-002',
+      ),
+      Quiz(
+        question: 'Cross-cultural experiences can be ___.',
+        options: [
+          'boring',
+          'exciting and enriching',
+          'confusing only',
+          'unnecessary',
+        ],
+        correctAnswer: 'exciting and enriching',
+        tier: Tier.C1,
+        articleId: 'c1-002',
+      ),
+      Quiz(
+        question: 'Learning about cultures helps us ___.',
+        options: [
+          'become isolated',
+          'connect with people worldwide',
+          'stay in one place',
+          'avoid communication',
+        ],
+        correctAnswer: 'connect with people worldwide',
+        tier: Tier.C1,
+        articleId: 'c1-002',
+      ),
+
+      // C1-003: Media and Influence
+      Quiz(
+        question: 'What role does media play?',
+        options: [
+          'no role',
+          'shaping public opinion',
+          'only entertainment',
+          'selling products',
+        ],
+        correctAnswer: 'shaping public opinion',
+        tier: Tier.C1,
+        articleId: 'c1-003',
+      ),
+      Quiz(
+        question: 'What responsibility do journalists have?',
+        options: [
+          'to be popular',
+          'to report accurate and unbiased information',
+          'to entertain',
+          'to make money',
+        ],
+        correctAnswer: 'to report accurate and unbiased information',
+        tier: Tier.C1,
+        articleId: 'c1-003',
+      ),
+      Quiz(
+        question: 'What helps develop critical thinking?',
+        options: [
+          'reading one news source',
+          'reading various news sources',
+          'avoiding news',
+          'watching only TV',
+        ],
+        correctAnswer: 'reading various news sources',
+        tier: Tier.C1,
+        articleId: 'c1-003',
+      ),
+      Quiz(
+        question: 'How is digital media described?',
+        options: ['boring', 'exciting', 'simple', 'old'],
+        correctAnswer: 'exciting',
+        tier: Tier.C1,
+        articleId: 'c1-003',
+      ),
+      Quiz(
+        question: 'What must we improve to distinguish facts from opinions?',
+        options: [
+          'physical fitness',
+          'media literacy',
+          'math skills',
+          'writing skills',
+        ],
+        correctAnswer: 'media literacy',
+        tier: Tier.C1,
+        articleId: 'c1-003',
+      ),
+
+      // C2-001: Literature Analysis
+      Quiz(
+        question: 'What does literary analysis require?',
+        options: [
+          'quick reading',
+          'deep reading and critical interpretation',
+          'memorization',
+          'speed',
+        ],
+        correctAnswer: 'deep reading and critical interpretation',
+        tier: Tier.C2,
+        articleId: 'c2-001',
+      ),
+      Quiz(
+        question: 'When examining texts, what do we explore?',
+        options: [
+          'only the plot',
+          'themes, symbolism, and narrative techniques',
+          'only characters',
+          'page numbers',
+        ],
+        correctAnswer: 'themes, symbolism, and narrative techniques',
+        tier: Tier.C2,
+        articleId: 'c2-001',
+      ),
+      Quiz(
+        question: 'What does classic literature offer?',
+        options: [
+          'entertainment only',
+          'insights into human nature and society',
+          'simple stories',
+          'quick reading',
+        ],
+        correctAnswer: 'insights into human nature and society',
+        tier: Tier.C2,
+        articleId: 'c2-001',
+      ),
+      Quiz(
+        question: 'How is classic literature described?',
+        options: ['boring', 'exciting', 'simple', 'short'],
+        correctAnswer: 'exciting',
+        tier: Tier.C2,
+        articleId: 'c2-001',
+      ),
+      Quiz(
+        question: 'Careful analysis helps us appreciate ___.',
+        options: [
+          'the price of books',
+          'the artistry of great authors',
+          'the length of books',
+          'the covers of books',
+        ],
+        correctAnswer: 'the artistry of great authors',
+        tier: Tier.C2,
+        articleId: 'c2-001',
+      ),
+
+      // C2-002: Philosophy and Ethics
+      Quiz(
+        question: 'What does philosophy explore?',
+        options: [
+          'only science',
+          'fundamental questions about existence and morality',
+          'only history',
+          'only math',
+        ],
+        correctAnswer: 'fundamental questions about existence and morality',
+        tier: Tier.C2,
+        articleId: 'c2-002',
+      ),
+      Quiz(
+        question: 'What does reading philosophical texts do?',
+        options: [
+          'makes us sleep',
+          'challenges us to think deeply',
+          'wastes time',
+          'confuses us',
+        ],
+        correctAnswer: 'challenges us to think deeply',
+        tier: Tier.C2,
+        articleId: 'c2-002',
+      ),
+      Quiz(
+        question: 'How are philosophical ideas described?',
+        options: ['boring', 'exciting', 'simple', 'useless'],
+        correctAnswer: 'exciting',
+        tier: Tier.C2,
+        articleId: 'c2-002',
+      ),
+      Quiz(
+        question: 'What does engaging with philosophy help improve?',
+        options: [
+          'physical strength',
+          'reasoning abilities',
+          'singing skills',
+          'cooking skills',
+        ],
+        correctAnswer: 'reasoning abilities',
+        tier: Tier.C2,
+        articleId: 'c2-002',
+      ),
+      Quiz(
+        question: 'Philosophy encourages us to ___.',
+        options: [
+          'accept everything',
+          'question assumptions',
+          'ignore problems',
+          'avoid thinking',
+        ],
+        correctAnswer: 'question assumptions',
+        tier: Tier.C2,
+        articleId: 'c2-002',
+      ),
+
+      // C2-003: Academic Writing
+      Quiz(
+        question: 'What does academic writing demand?',
+        options: [
+          'simple language',
+          'precision, clarity, and rigorous research',
+          'short sentences',
+          'informal tone',
+        ],
+        correctAnswer: 'precision, clarity, and rigorous research',
+        tier: Tier.C2,
+        articleId: 'c2-003',
+      ),
+      Quiz(
+        question: 'What is essential for understanding academic conventions?',
+        options: [
+          'watching videos',
+          'reading scholarly books and articles',
+          'social media',
+          'TV shows',
+        ],
+        correctAnswer: 'reading scholarly books and articles',
+        tier: Tier.C2,
+        articleId: 'c2-003',
+      ),
+      Quiz(
+        question: 'Why are citation and referencing crucial?',
+        options: [
+          'to make it longer',
+          'to avoid plagiarism',
+          'to look smart',
+          'to fill space',
+        ],
+        correctAnswer: 'to avoid plagiarism',
+        tier: Tier.C2,
+        articleId: 'c2-003',
+      ),
+      Quiz(
+        question: 'What does developing academic writing skills require?',
+        options: ['talent only', 'practice and dedication', 'luck', 'age'],
+        correctAnswer: 'practice and dedication',
+        tier: Tier.C2,
+        articleId: 'c2-003',
+      ),
+      Quiz(
+        question: 'Academic writing is described as ___.',
+        options: ['boring', 'an exciting journey', 'impossible', 'simple'],
+        correctAnswer: 'an exciting journey',
+        tier: Tier.C2,
+        articleId: 'c2-003',
+      ),
+];
+

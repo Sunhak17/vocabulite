@@ -9,15 +9,14 @@ class Flashcard {
     required this.example,
   });
 
+  Flashcard.fromJson(Map<String, dynamic> json)
+      : word = json['word'] as String,
+        definition = json['definition'] as String,
+        example = json['example'] as String;
+
   Map<String, dynamic> toJson() => {
         'word': word,
         'definition': definition,
         'example': example,
       };
-
-  factory Flashcard.fromJson(Map<String, dynamic> json) => Flashcard(
-        word: json['word'] as String,
-        definition: json['definition'] as String,
-        example: json['example'] as String,
-      );
 }

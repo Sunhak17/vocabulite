@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import '../data/quiz_repository.dart';
-import '../model/quiz.dart';
+import '../../../data/quiz_repository.dart';
+import '../../../models/quiz.dart';
 import 'quiz_result_page.dart';
 
 class QuizQuestionPage extends StatefulWidget {
-  const QuizQuestionPage({super.key});
+  final String? articleId; 
+
+  const QuizQuestionPage({super.key, this.articleId});
 
   @override
   State<QuizQuestionPage> createState() => _QuizQuestionPageState();
@@ -13,11 +15,89 @@ class QuizQuestionPage extends StatefulWidget {
 class _QuizQuestionPageState extends State<QuizQuestionPage> {
   int currentIndex = 0;
   String? selectedAnswer;
-  List<Quiz> quizzes = QuizRepository.getSampleQuizzes();
+  late List<Quiz> quizzes;
   List<QuizResult> results = [];
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.articleId != null) {
+      quizzes = dummyQuizzes
+          .where((quiz) => quiz.articleId == widget.articleId)
+          .toList();
+    } else {
+      quizzes = dummyQuizzes.where((quiz) => quiz.articleId == null).toList();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (quizzes.isEmpty) {
+      return Scaffold(
+        body: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF1976D2), Color(0xFF64B5F6)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      IconButton(
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
+                        ),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      const Text(
+                        'Quiz',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 48),
+                    ],
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.quiz, size: 100, color: Colors.white54),
+                const SizedBox(height: 20),
+                const Text(
+                  'No Quiz Available',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 40),
+                  child: Text(
+                    'There are no quiz questions available at the moment.',
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const Spacer(),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final currentQuiz = quizzes[currentIndex];
 
     return Scaffold(
@@ -39,7 +119,11 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
+                      icon: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 28,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     const Text(
@@ -57,7 +141,6 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
               const SizedBox(height: 20),
 
-              // Question number
               Container(
                 width: 60,
                 height: 60,
@@ -79,7 +162,6 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
               const SizedBox(height: 30),
 
-              // Question card
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Container(
@@ -90,7 +172,7 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Color.fromRGBO(0, 0, 0, 0.2),
                         blurRadius: 10,
                         offset: const Offset(0, 5),
                       ),
@@ -110,7 +192,6 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
               const SizedBox(height: 30),
 
-              // Options
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: GridView.count(
@@ -128,8 +209,8 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
                         });
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: isSelected 
-                            ? const Color(0xFF8B4513) 
+                        backgroundColor: isSelected
+                            ? const Color(0xFF8B4513)
                             : const Color(0xFFD97706),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
@@ -152,41 +233,40 @@ class _QuizQuestionPageState extends State<QuizQuestionPage> {
 
               const Spacer(),
 
-              // Next button
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: SizedBox(
                   width: 200,
                   child: ElevatedButton(
-                    onPressed: selectedAnswer == null ? null : () {
-                      // Save result
-                      results.add(
-                        QuizResult(
-                          question: currentQuiz.question,
-                          userAnswer: selectedAnswer!,
-                          correctAnswer: currentQuiz.correctAnswer,
-                        ),
-                      );
+                    onPressed: selectedAnswer == null
+                        ? null
+                        : () {
+                            results.add(
+                              QuizResult(
+                                question: currentQuiz.question,
+                                userAnswer: selectedAnswer!,
+                                correctAnswer: currentQuiz.correctAnswer,
+                              ),
+                            );
 
-                      if (currentIndex < quizzes.length - 1) {
-                        // Next question
-                        setState(() {
-                          currentIndex++;
-                          selectedAnswer = null;
-                        });
-                      } else {
-                        // Show results
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => QuizResultPage(
-                              results: results,
-                              level: currentQuiz.level,
-                            ),
-                          ),
-                        );
-                      }
-                    },
+                            if (currentIndex < quizzes.length - 1) {
+                              setState(() {
+                                currentIndex++;
+                                selectedAnswer = null;
+                              });
+                            } else {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => QuizResultPage(
+                                    results: results,
+                                    tier: currentQuiz.tier.name,
+                                    articleId: widget.articleId,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8B4513),
                       foregroundColor: Colors.white,

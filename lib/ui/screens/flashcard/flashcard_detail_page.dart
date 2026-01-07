@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import '../data/flashcard_repository.dart';
-import '../model/flashcard.dart';
+import '../../../models/flashcard.dart';
+import '../../../models/flashcard_list.dart';
+import '../../../data/user_progress_repository.dart';
+import '../../../data/flashcard_repository.dart';
 
 class FlashcardDetailPage extends StatefulWidget {
-  const FlashcardDetailPage({super.key});
+  final FlashcardList? flashcardList;
+  
+  const FlashcardDetailPage({super.key, this.flashcardList});
 
   @override
   State<FlashcardDetailPage> createState() => _FlashcardDetailPageState();
@@ -16,23 +20,34 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final flashcards = FlashcardRepository.getAll();
+    final flashcards = widget.flashcardList?.flashcards ?? [];
 
     if (flashcards.isEmpty) {
       return Scaffold(
-        body: const Center(child: Text('No flashcards')),
+        appBar: AppBar(
+          title: Text(widget.flashcardList?.name ?? 'Flashcards'),
+          backgroundColor: const Color(0xFF1976D2),
+          foregroundColor: Colors.white,
+        ),
+        body: const Center(
+          child: Text(
+            'No words in this list yet!\nAdd words from articles.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.grey),
+          ),
+        ),
       );
     }
 
-    final currentCard = flashcards[currentIndex];
+    final currentFlashcard = flashcards[currentIndex];
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
+      body: Column(
+        children: [
+          const SizedBox(height: 40),
+          // Header
+          Container(
               padding: const EdgeInsets.all(16),
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -48,12 +63,12 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   const SizedBox(width: 8),
-                  const Icon(Icons.mail_outline, color: Colors.white, size: 28),
+                  const Icon(Icons.style, color: Colors.white, size: 28),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Welcome!',
-                      style: TextStyle(
+                      widget.flashcardList?.name ?? 'Flashcards',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -99,7 +114,7 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Color.fromRGBO(0, 0, 0, 0.2),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -108,54 +123,44 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (!showDefinition) ...[
-                              // Word only
-                              Text(
-                                currentCard.word,
-                                style: const TextStyle(
-                                  fontSize: 48,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
+                            // Show the word
+                            Text(
+                              currentFlashcard.word,
+                              style: const TextStyle(
+                                fontSize: 48,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
                               ),
-                            ] else ...[
-                              // Word with definition
-                              Text(
-                                currentCard.word,
-                                style: const TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 32),
+                              textAlign: TextAlign.center,
+                            ),
+                            if (showDefinition) ...[
+                              const SizedBox(height: 24),
                               Container(
-                                padding: const EdgeInsets.all(24),
+                                padding: const EdgeInsets.all(20),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFF59E0B),
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      currentCard.definition,
+                                      currentFlashcard.definition,
                                       style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.white,
-                                        height: 1.5,
+                                        fontWeight: FontWeight.bold,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                     const SizedBox(height: 12),
                                     Text(
-                                      'Example: ${currentCard.example}',
+                                      currentFlashcard.example,
                                       style: const TextStyle(
                                         fontSize: 14,
                                         color: Colors.white,
                                         fontStyle: FontStyle.italic,
                                       ),
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
@@ -183,7 +188,6 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              elevation: 3,
                             ),
                             child: const Text(
                               'Show Definition',
@@ -205,7 +209,6 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              elevation: 3,
                             ),
                             child: const Text(
                               'I Remember This Word',
@@ -227,7 +230,6 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              elevation: 3,
                             ),
                             child: const Text(
                               'Next Word',
@@ -251,7 +253,7 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
                           borderRadius: BorderRadius.circular(20),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
+                              color: Color.fromRGBO(0, 0, 0, 0.2),
                               blurRadius: 15,
                               offset: const Offset(0, 8),
                             ),
@@ -319,17 +321,30 @@ class _FlashcardDetailPageState extends State<FlashcardDetailPage> {
             const SizedBox(height: 40),
           ],
         ),
-      ),
     );
   }
 
   void _moveToNext(List<Flashcard> flashcards) {
+    if (currentUser != null && currentIndex < flashcards.length && widget.flashcardList != null) {
+      final currentFlashcard = flashcards[currentIndex];
+      final currentWord = currentFlashcard.word;
+      
+      // Add to learned words
+      if (!currentUser!.learnedWords.contains(currentWord)) {
+        currentUser!.learnWord(currentWord);
+        saveUserData();
+      }
+      
+      // Remove the flashcard from the list after learning
+      widget.flashcardList!.flashcards.remove(currentFlashcard);
+      saveFlashcardLists(currentUser!.userName);
+    }
+
     setState(() {
-      if (currentIndex < flashcards.length - 1) {
-        currentIndex++;
-        showDefinition = false;
-      } else {
+      if (currentIndex >= flashcards.length - 1 || flashcards.isEmpty) {
         isCompleted = true;
+      } else {
+        showDefinition = false;
       }
     });
   }
